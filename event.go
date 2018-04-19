@@ -6,12 +6,13 @@ import (
 )
 
 type Event struct {
-	Host       *string     `json:"host,omitempty"`
-	Index      *string     `json:"index,omitempty"`
-	Source     *string     `json:"source,omitempty"`
-	SourceType *string     `json:"sourcetype,omitempty"`
-	Time       *string     `json:"time,omitempty"`
-	Event      interface{} `json:"event"`
+	Host       *string           `json:"host,omitempty"`
+	Index      *string           `json:"index,omitempty"`
+	Source     *string           `json:"source,omitempty"`
+	SourceType *string           `json:"sourcetype,omitempty"`
+	Time       *string           `json:"time,omitempty"`
+	Event      interface{}       `json:"event"`
+	Fields     map[string]string `json:"fields,omitempty"`
 }
 
 func NewEvent(data interface{}) *Event {
@@ -23,6 +24,18 @@ func NewEvent(data interface{}) *Event {
 		return &Event{Event: data.(string)}
 	default:
 		return &Event{Event: data}
+	}
+}
+
+func NewEventWithFields(data interface{}, fields map[string]string) *Event {
+	// Empty event is not allowed, but let HEC complain the error
+	switch data.(type) {
+	case *string:
+		return &Event{Event: *data.(*string), Fields: fields}
+	case string:
+		return &Event{Event: data.(string), Fields: fields}
+	default:
+		return &Event{Event: data, Fields: fields}
 	}
 }
 

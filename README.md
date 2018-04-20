@@ -15,7 +15,7 @@ Install all dependencies
 glide install
 ```
 
-Build the example
+Build the main example
 
 ```bash
 go build -o build/example ./example/main.go
@@ -46,7 +46,15 @@ event1.SetTime(time.Now())
 event2 := hec.NewEvent("event two")
 event2.SetTime(time.Now().Add(-time.Minute))
 
-err := client.WriteBatch([]*hec.Event{event1, event2})
+fields := map[string]string{}
+
+fields["request_url"] = "http://www.example.com/ping"
+fields["environment"] = "production"
+
+eventWithFields1 := hec.NewEventWithFields("event one", fields)
+eventWithFields1.SetTime(time.Now())
+
+err := client.WriteBatch([]*hec.Event{event1, event2, eventWithFields1})
 if err != nil {
 	log.Fatal(err)
 }

@@ -15,7 +15,7 @@ Install all dependencies
 glide install
 ```
 
-Build the main example
+Build the example
 
 ```bash
 go build -o build/example ./example/main.go
